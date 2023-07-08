@@ -1,0 +1,12 @@
+#vscode
+.vscode
+
+#output of makefile
+output
+
+#preCompiledHeaders
+*.h.gch
+
+#generated dirs
+build/
+preCompiledHeaders/
