@@ -1,4 +1,4 @@
-output: common.o memory.o value.o chunk.o debug.o main.o move execute clean
+output: common.o memory.o value.o chunk.o debug.o vm.o main.o move execute clean
 
 execute:
 	@g++ ./src/build/*.o -o ./src/output
@@ -24,7 +24,10 @@ debug.o: ./src/debug.h ./src/debug.c
 main.o: ./src/main.c
 	@g++ -c ./src/main.c
 
-move: 
+vm.o: ./src/vm.h ./src/vm.c
+	@g++ -c ./src/vm.h ./src/vm.c
+
+move:
 	@mkdir -p ./src/build
 	@mv *.o ./src/build/
 	@mkdir -p ./src/preCompiledHeaders
