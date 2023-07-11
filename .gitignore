@@ -1,5 +1,5 @@
 #vscode
-.vscode
+.vscode/*
 
 #output of makefile
 output

@@ -1,5 +1,8 @@
 {
-    "files.associations": {
-        "common.h": "c"
-    }
+  "files.associations": {
+    "*.njk": "nunjucks",
+    "*.liquid": "liquid",
+    "common.h": "c",
+    "chunk.h": "c"
+  }
 }
