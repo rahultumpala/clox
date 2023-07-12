@@ -3,6 +3,7 @@
     "*.njk": "nunjucks",
     "*.liquid": "liquid",
     "common.h": "c",
-    "chunk.h": "c"
+    "chunk.h": "c",
+    "compiler.h": "c"
   }
 }
