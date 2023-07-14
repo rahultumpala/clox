@@ -5,6 +5,7 @@
 #include "compiler.h"
 #include "scanner.h"
 #include "chunk.h"
+#include "object.h"
 
 #ifdef DEBUG_PRINT_CODE
 #include "debug.h"
@@ -142,10 +143,10 @@ static void binary() {
     switch (operatorType)
     {
     case TOKEN_BANG_EQUAL:    emitBytes(OP_EQUAL, OP_NOT); break;
-    case TOKEN_LESS:          emitByte(OP_LESS); break; 
-    case TOKEN_GREATER:       emitByte(OP_GREATER); break; 
+    case TOKEN_LESS:          emitByte(OP_LESS); break;
+    case TOKEN_GREATER:       emitByte(OP_GREATER); break;
     case TOKEN_LESS_EQUAL:    emitBytes(OP_GREATER, OP_NOT); break;
-    case TOKEN_GREATER_EQUAL: emitBytes(OP_LESS, OP_NOT); break; 
+    case TOKEN_GREATER_EQUAL: emitBytes(OP_LESS, OP_NOT); break;
     case TOKEN_PLUS:
         emitByte(OP_ADD);
         break;
@@ -181,6 +182,11 @@ static void number() {
     double value = strtod(parser.previous.start, NULL);
     emitConstant(NUMBER_VAL(value));
 }
+
+static void string() [
+    // +1 and -2 to trim leading and trailing whitespaces
+    emitConstant(OBJ_VAL(copyString(parser.previous.start + 1, parser.previous.length - 2)));
+]
 
 static void unary(){
     TokenType operatorType = parser.previous.type;
@@ -222,7 +228,7 @@ ParseRule rules[] = {
     [TOKEN_LESS]            = {NULL,     binary, PREC_COMPARISON},
     [TOKEN_LESS_EQUAL]      = {NULL,     binary, PREC_COMPARISON},
     [TOKEN_IDENTIFIER]      = {NULL,     NULL,   PREC_NONE},
-    [TOKEN_STRING]          = {NULL,     NULL,   PREC_NONE},
+    [TOKEN_STRING]          = {string,   NULL,   PREC_NONE},
     [TOKEN_NUMBER]          = {number,   NULL,   PREC_NONE},
     [TOKEN_AND]             = {NULL,     NULL,   PREC_NONE},
     [TOKEN_CLASS]           = {NULL,     NULL,   PREC_NONE},
