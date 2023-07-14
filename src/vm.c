@@ -62,8 +62,8 @@ static InterpretResult run() {
             runtimeError("Operands must be numbers."); \
             return INTERPRET_RUNTIME_ERROR; \
         } \
-        double b = pop(); \
-        double a = pop(); \
+        double b = AS_NUMBER(pop()); \
+        double a = AS_NUMBER(pop()); \
         push(valueType(a op b)); \
     } while(false)
 
@@ -89,11 +89,12 @@ static InterpretResult run() {
             case OP_NIL: push(NIL_VAL); break;
             case OP_TRUE: push(BOOL_VAL(true)); break;
             case OP_FALSE: push(BOOL_VAL(false)); break;
-            case OP_EQUAL: 
+            case OP_EQUAL: {
                 Value a = pop();
                 Value b = pop();
                 push(BOOL_VAL(valuesEqual(a,b)));
                 break;
+            }
             case OP_GREATER:  BINARY_OP(BOOL_VAL, >); break; 
             case OP_LESS:     BINARY_OP(BOOL_VAL, <); break;
             case OP_ADD:      BINARY_OP(NUMBER_VAL, +); break;
@@ -114,7 +115,6 @@ static InterpretResult run() {
                 printValue(pop());
                 printf("\n");
                 return INTERPRET_OK;
-                break;
             default:
                 break;
         }

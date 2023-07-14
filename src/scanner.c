@@ -46,21 +46,21 @@ static bool match(char expected) {
 
 
 static Token makeToken(TokenType type) {
-    struct Token token = {
-        .type = type;
-        .start = scanner.start;
-        .length = (int) (scanner.current - scanner.start);
-        .line = scanner.line;
+    Token token = {
+        .type = type,
+        .start = scanner.start,
+        .length = (int) (scanner.current - scanner.start),
+        .line = scanner.line,
     };
     return token;
 }
 
 static Token errorToken(const char *message) {
-    struct Token token = {
-        .type = TOKEN_ERROR;
-        .start = message;
-        .length = (int)strlen(message);
-        .line = scanner.line;
+    Token token = {
+        .type = TOKEN_ERROR,
+        .start = message,
+        .length = (int)strlen(message),
+        .line = scanner.line,
     };
     return token;
 }
@@ -190,8 +190,7 @@ Token scanToken() {
         case ';': return makeToken(TOKEN_SEMICOLON);
         case ',': return makeToken(TOKEN_COMMA);
         case '.': return makeToken(TOKEN_DOT);
-        case '-': return makeToken(TOKEN_COMMA);
-        case ',': return makeToken(TOKEN_MINUS);
+        case '-': return makeToken(TOKEN_MINUS);
         case '+': return makeToken(TOKEN_PLUS);
         case '/': return makeToken(TOKEN_SLASH);
         case '*': return makeToken(TOKEN_STAR);

@@ -10,7 +10,7 @@
 static void repl() {
     char line[1024];
     for(;;){
-        printf("> ");
+        printf("lox> ");
         if(!fgets(line, sizeof(line), stdin)) {
             printf("\n");
             break;

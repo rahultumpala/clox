@@ -104,7 +104,7 @@ static void emitReturn() {
     emitByte(OP_RETURN);
 }
 
-stativ uint8_t makeConstant(Value value) {
+static uint8_t makeConstant(Value value) {
     int constant = addConstant(currentChunk(), value);
     if(constant > UINT8_MAX){
         error("Too many constants in one chunk");
@@ -142,7 +142,6 @@ static void binary() {
     switch (operatorType)
     {
     case TOKEN_BANG_EQUAL:    emitBytes(OP_EQUAL, OP_NOT); break;
-    case TOKEN_EQUAL_EQUAL:   emitBytes(OP_EQUAL); break;
     case TOKEN_LESS:          emitByte(OP_LESS); break; 
     case TOKEN_GREATER:       emitByte(OP_GREATER); break; 
     case TOKEN_LESS_EQUAL:    emitBytes(OP_GREATER, OP_NOT); break;
@@ -157,7 +156,7 @@ static void binary() {
         emitByte(OP_MULTIPLY);
         break;
     case TOKEN_SLASH:
-        emitByte(OP - OP_DIVIDE);
+        emitByte(OP_DIVIDE);
         break;
     default:
         return;
