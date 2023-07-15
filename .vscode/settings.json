@@ -17,6 +17,8 @@
     "*.tcc": "cpp",
     "ratio": "cpp",
     "regex": "cpp",
-    "variant": "cpp"
+    "variant": "cpp",
+    "memory.h": "c",
+    "vm.h": "c"
   }
 }

@@ -183,10 +183,10 @@ static void number() {
     emitConstant(NUMBER_VAL(value));
 }
 
-static void string() [
+static void string() {
     // +1 and -2 to trim leading and trailing whitespaces
     emitConstant(OBJ_VAL(copyString(parser.previous.start + 1, parser.previous.length - 2)));
-]
+}
 
 static void unary(){
     TokenType operatorType = parser.previous.type;
