@@ -1,4 +1,6 @@
-output: common.o memory.o value.o chunk.o scanner.o object.o compile.o debug.o vm.o main.o move execute clean
+# Not pretty. I know. Will change later.
+
+output: common.o memory.o value.o chunk.o scanner.o object.o table.o compile.o debug.o vm.o main.o move execute clean
 
 execute:
 	@g++ ./src/build/*.o -o ./src/output
@@ -29,6 +31,9 @@ compile.o: ./src/compiler.h ./src/compiler.c
 
 object.o : ./src/object.h ./src/object.c
 	@g++ -c ./src/object.h ./src/object.c
+
+table.o : ./src/table.h ./src/table.c
+	@g++ -c ./src/table.h ./src/table.c
 
 main.o: ./src/main.c
 	@g++ -c ./src/main.c
