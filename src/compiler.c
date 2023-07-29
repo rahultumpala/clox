@@ -46,7 +46,15 @@ typedef struct {
     int depth;
 } Local;
 
+typedef enum {
+    TYPE_FUNCTION,
+    TYPE_SCRIPT
+} FunctionType;
+
 typedef struct {
+    ObjFunction *function;
+    FunctionType type;
+
     Local locals[UINT8_COUNT];
     int localCount;
     int scopeDepth;
@@ -54,10 +62,9 @@ typedef struct {
 
 Parser parser;
 Compiler *current = NULL;
-Chunk *compilingChunk;
 
 static Chunk *currentChunk() {
-    return compilingChunk;
+    return &current->function->chunk;
 }
 
 static void errorAt(Token *token, const char *message){
@@ -169,19 +176,31 @@ static void patchJump(int offset) {
     currentChunk()->code[offset+1] = jump & 0xff;
 }
 
-static void initCompiler(Compiler *compiler) {
+static void initCompiler(Compiler *compiler, FunctionType type) {
+    compiler->function = NULL;
+    compiler->type = type;
     compiler->localCount = 0;
     compiler->scopeDepth = 0;
+    compiler->function = newFunction();
     current = compiler;
+
+    Local *local = &current->locals[current->localCount++];
+    local->depth = 0;
+    local->name.start = "";
+    local->name.length = 0;
 }
 
-static void endCompiler() {
+static ObjFunction *endCompiler() {
     emitReturn();
+    ObjFunction *function = current->function;
+
     #ifdef DEBUG_PRINT_CODE
      if(!parser.hadError) {
-        disassembleChunk(currentChunk(), "code");
+        disassembleChunk(currentChunk(), function->name != NULL ? function->name->chars : "<script>");
      }
     #endif
+
+    return function;
 }
 
 static void beginScope() {
@@ -349,7 +368,7 @@ static void namedVariable(Token name, bool canAssign) {
     if(canAssign && match(TOKEN_EQUAL)) {
         expression();
         emitBytes(setOp, (uint8_t) arg);
-    } else { 
+    } else {
         emitBytes(getOp, (uint8_t) arg);
     }
 }
@@ -553,7 +572,7 @@ static void ifStatement() {
     int thenJump = emitJump(OP_JUMP_IF_FALSE);
     emitByte(OP_POP);
     statement();
-    
+
     int elseJump = emitJump(OP_JUMP);
 
     patchJump(thenJump);
@@ -638,19 +657,19 @@ static void statement() {
     }
 }
 
-bool compile(const char *source, Chunk *chunk) {
+ObjFunction *compile(const char *source) {
     initScanner(source);
     Compiler compiler;
-    initCompiler(&compiler);
-    compilingChunk = chunk;
+    initCompiler(&compiler, TYPE_SCRIPT);
+
     parser.hadError = false;
     parser.panicMode = false;
     advance();
-    
+
     while(!match(TOKEN_EOF)){
         declaration();
     }
 
-    endCompiler();
-    return !parser.hadError;
+    ObjFunction *function = endCompiler();
+    return parser.hadError ? NULL: function;
 }
