@@ -9,6 +9,7 @@
 #include "compiler.h"
 #include "object.h"
 #include "memory.h"
+#include "table.h"
 
 VM vm;
 

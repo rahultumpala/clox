@@ -51,7 +51,7 @@ typedef enum {
     TYPE_SCRIPT
 } FunctionType;
 
-typedef struct {
+struct Compiler {
     struct Compiler *enclosing;
     ObjFunction *function;
     FunctionType type;
@@ -59,7 +59,8 @@ typedef struct {
     Local locals[UINT8_COUNT];
     int localCount;
     int scopeDepth;
-} Compiler;
+};
+typedef struct Compiler Compiler;
 
 Parser parser;
 Compiler *current = NULL;
@@ -324,6 +325,7 @@ static void binary(bool canAssign) {
     }
 }
 
+static uint8_t argumentList();
 static void call(bool canAssign) {
     uint8_t argCount = argumentList();
     emitBytes(OP_CALL, argCount);
