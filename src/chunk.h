@@ -30,6 +30,9 @@ typedef enum {
     OP_GREATER,
     OP_LESS,
     OP_CALL,
+    OP_CLOSURE,
+    OP_SET_UPVALUE,
+    OP_GET_UPVALUE
 } OpCode;
 
 typedef struct {
