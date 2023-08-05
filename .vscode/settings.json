@@ -19,6 +19,12 @@
     "regex": "cpp",
     "variant": "cpp",
     "memory.h": "c",
-    "vm.h": "c"
+    "vm.h": "c",
+    "numeric": "c",
+    "fstream": "c",
+    "iostream": "c",
+    "shared_mutex": "c",
+    "typeindex": "c",
+    "typeinfo": "c"
   }
 }
