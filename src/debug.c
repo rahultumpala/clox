@@ -49,6 +49,8 @@ int disassembleInstruction(Chunk *chunk, int offset){
     switch(instruction){
         case OP_CONSTANT:
             return constantInstruction("OP_CONSTANT", chunk, offset);
+        case OP_CLASS:
+            return constantInstruction("OP_CLASS", chunk, offset);
         case OP_NIL:
             return simpleInstruction("OP_NIL", offset);
         case OP_TRUE:
@@ -120,6 +122,7 @@ int disassembleInstruction(Chunk *chunk, int offset){
         case OP_CLOSE_UPVALUE: {
             return simpleInstruction("OP_CLOSE_UPVALUE", offset);
         }
+
         default:
             printf("Unknown opcode %d\n", instruction);
             return offset+1;
