@@ -25,7 +25,7 @@ static Entry* findEntry(Entry *entries, int capacity, ObjString *key) {
     for(;;){
         Entry *entry = &entries[index];
         if(entry->key == NULL) {
-            if(IS_NIL(entry->value)){   
+            if(IS_NIL(entry->value)){
                 // Empty entry.
                 // return tombstone to put the element in place of the tombstone
                 // to fill the gaps inside the linear probe sequence
@@ -63,7 +63,7 @@ static void adjustCapacity(Table *table, int capacity) {
 
     FREE_ARRAY(Entry, table->entries, table->capacity);
     table->entries = entries;
-    table->capacity = capacity; 
+    table->capacity = capacity;
 }
 
 bool tableGet(Table *table, ObjString *key, Value *value) {
@@ -122,7 +122,7 @@ ObjString *tableFindString(Table *table, const char *chars, int length, uint32_t
         if(entry->key == NULL) {
             // Stop if we find an empty non-tombstone entry.
             if(IS_NIL(entry->value)) return NULL;
-        } else if (entry->key->length == length 
+        } else if (entry->key->length == length
                    && entry->key->hash == hash
                    && memcmp(entry->key->chars, chars, length) == 0) {
                     // Found it.!
@@ -130,5 +130,22 @@ ObjString *tableFindString(Table *table, const char *chars, int length, uint32_t
         }
 
         index = (index+1) % table->capacity;
+    }
+}
+
+void tableRemoveWhite(Table *table) {
+    for(int i = 0; i < table->capacity; i++) {
+        Entry *entry = &table->entries[i];
+        if (entry->key != NULL && !entry->key->obj.isMarked) {
+            tableDelete(table, entry->key);
+        }
+    }
+}
+
+void markTable(Table *table){
+    for(int i = 0; i < table->capacity; i++) {
+        Entry *entry = &table->entries[i];
+        markObject((Obj*)entry->key); // keys are strings
+        markValue(entry->value);
     }
 }
