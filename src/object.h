@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "chunk.h"
+#include "table.h"
 #include "value.h"
 
 #define OBJ_TYPE(value)    (AS_OBJ(value)->type)
@@ -12,6 +13,7 @@
 #define IS_STRING(value)   isObjType(value, OBJ_STRING)
 #define IS_FUNCTION(value) isObjType(value, OBJ_FUNCTION)
 #define IS_NATIVE(value)   isObjType(value, OBJ_NATIVE)
+#define IS_INSTANCE(value) isObjType(value, OBJ_INSTANCE)
 
 #define AS_CLOSURE(value)  ((ObjClosure *)AS_OBJ(value))
 #define AS_CLASS(value)    ((ObjClass *)AS_OBJ(value))
@@ -19,6 +21,7 @@
 #define AS_STRING(value)   ((ObjString*)AS_OBJ(value))
 #define AS_CSTRING(value)  (((ObjString *)AS_OBJ(value))->chars)
 #define AS_FUNCTION(value) ((ObjFunction *)AS_OBJ(value))
+#define AS_INSTANCE(value) ((ObjInstance *)AS_OBJ(value))
 
 typedef enum {
     OBJ_STRING,
@@ -27,6 +30,7 @@ typedef enum {
     OBJ_CLOSURE,
     OBJ_UPVALUE,
     OBJ_CLASS,
+    OBJ_INSTANCE
 } ObjType;
 
 struct Obj {
@@ -78,11 +82,18 @@ typedef struct {
     ObjString *name;
 } ObjClass;
 
+typedef struct {
+    Obj obj;
+    ObjClass *klass;
+    Table fields;
+} ObjInstance;
+
 ObjClass *newClass(ObjString *name);
 ObjClosure *newClosure(ObjFunction *function);
 ObjFunction *newFunction();
 ObjUpvalue *newUpvalue(Value *slot);
 ObjNative *newNative(NativeFn function);
+ObjInstance *newInstance(ObjClass *klass);
 ObjString *takeString(char *chars, int length);
 ObjString *copyString(const char *chars, int length);
 void printObject(Value value);

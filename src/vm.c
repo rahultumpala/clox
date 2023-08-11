@@ -118,6 +118,11 @@ static bool callValue(Value callee, int argCount) {
             push(result);
             return true;
         }
+        case OBJ_CLASS: {
+            ObjClass *klass = AS_CLASS(callee);
+            vm.stackTop[-argCount - 1] = OBJ_VAL(newInstance(klass));
+            return true;
+        }
         default:
             break; // Non - callable object type.
         }
@@ -372,6 +377,40 @@ static InterpretResult run() {
             }
             case OP_CLASS: {
                 push( OBJ_VAL( newClass( READ_STRING() ) ) );
+                break;
+            }
+            case OP_GET_PROPERTY: {
+                if(!IS_INSTANCE(peek(0))) {
+                    runtimeError("Only instances have properties.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+
+
+                ObjInstance *instance = AS_INSTANCE(peek(0));
+                ObjString *name = READ_STRING();
+
+                Value value;
+                if(tableGet(&instance->fields, name, &value)) {
+                    pop(); // Instance
+                    push(value);
+                    break;
+                }
+
+                runtimeError("Undefined property '%s'.", name->chars);
+                return INTERPRET_RUNTIME_ERROR;
+            }
+            case OP_SET_PROPERTY: {
+                if(!IS_INSTANCE(peek(1))) {
+                    runtimeError("Only instances have fields.");
+                    return INTERPRET_RUNTIME_ERROR;
+                }
+
+
+                ObjInstance *instance = AS_INSTANCE(peek(1));
+                tableSet(&instance->fields, READ_STRING(), peek(0));
+                Value value = pop();
+                pop();
+                push(value);
                 break;
             }
             default:
